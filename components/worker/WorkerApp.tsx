@@ -187,7 +187,7 @@ function Home({ b, today, now, weekFrom, weekTo, token, goSwap }: {
                       <div className="small muted">{s.start} – {s.end}{s.coworkers.length ? ` · s tobom: ${s.coworkers.join(", ")}` : ""}</div>
                     </div>
                   )) : (
-                    <div className="faint" style={{ alignSelf: "center", paddingTop: 2 }}>{abs ? ABS[abs.type] : "Slobodno"}</div>
+                    <div className="faint" style={{ paddingTop: 8 }}>{abs ? ABS[abs.type] : "Slobodno"}</div>
                   )}
                 </div>
               </div>

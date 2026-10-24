@@ -16,6 +16,14 @@ import { CellSheet, FreeSheet } from "./ScheduleSheets";
 type View = "week" | "month";
 type SheetState = { kind: "cell"; date: DateStr; tplId: string } | { kind: "free"; date: DateStr } | null;
 
+/** Hrvatska množina: 1 upozorenje, 2–4 upozorenja, 5+ upozorenja. */
+function plural(n: number, one: string, few: string, many: string) {
+  const d = n % 10, h = n % 100;
+  if (d === 1 && h !== 11) return one;
+  if (d >= 2 && d <= 4 && (h < 12 || h > 14)) return few;
+  return many;
+}
+
 function rangeLabel(view: View, from: DateStr, to: DateStr) {
   if (view === "month") {
     const d = toDate(from);
@@ -152,9 +160,9 @@ export function Schedule() {
         </div>
 
         <div className="row wrap" style={{ gap: 8 }}>
-          <span className="pill"><Dot level="red" /> {counts.red} upozorenja</span>
-          <span className="pill"><Dot level="yellow" /> {counts.yellow} napomena</span>
-          {s.unpublished > 0 && <span className="pill">{s.unpublished} neobjavljeno</span>}
+          <span className="pill"><Dot level="red" /> {counts.red} {plural(counts.red, "upozorenje", "upozorenja", "upozorenja")}</span>
+          <span className="pill"><Dot level="yellow" /> {counts.yellow} {plural(counts.yellow, "napomena", "napomene", "napomena")}</span>
+          {s.unpublished > 0 && <span className="pill">{s.unpublished} {plural(s.unpublished, "promjena", "promjene", "promjena")} za objavu</span>}
         </div>
 
         <div className="hscroll">
@@ -174,7 +182,7 @@ export function Schedule() {
               className="btn btn-ghost" disabled={!!busy || s.loading}
               onClick={() => run("copy", async () => {
                 const n = await s.copyPreviousWeek();
-                return n ? `Kopirano ${n} smjena iz prošlog tjedna` : "Nema ništa novo za kopirati";
+                return n ? `Kopirano iz prošlog tjedna: ${n}` : "Nema ništa novo za kopirati";
               })}
             >
               <Copy size={17} /> Kopiraj prošli tjedan
@@ -185,7 +193,7 @@ export function Schedule() {
             onClick={() => run("patterns", async () => {
               const u = await s.applyPatterns();
               setAutoFill(u.assignmentIds.length || u.absenceIds.length ? u : null);
-              return u.assignmentIds.length ? `Dodano ${u.assignmentIds.length} smjena iz stalnih uzoraka` : "Uzorci su već primijenjeni";
+              return u.assignmentIds.length ? `Dodano iz stalnih uzoraka: ${u.assignmentIds.length}` : "Uzorci su već primijenjeni";
             })}
           >
             <Repeat size={17} /> Stalni uzorci
@@ -219,7 +227,7 @@ export function Schedule() {
                 <tr>
                   <th className="day" rowSpan={2} />
                   {columns.map((c) => <th key={c.loc.id} colSpan={c.tpls.length}>{c.loc.name}</th>)}
-                  <th rowSpan={2}>Slobodno / GO</th>
+                  <th rowSpan={2} className="free-head">Slobodno / GO</th>
                 </tr>
                 <tr>
                   {columns.map((c) => c.tpls.map((t) => (

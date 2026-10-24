@@ -152,19 +152,24 @@ function LocationCard({ l, templates, run, orgId }: {
       </div>
 
       {templates.map((t) => (
-        <div key={t.id} className="row" style={{ gap: 6, opacity: t.active ? 1 : 0.45 }}>
-          <input
-            className="input sm" style={{ flex: 1.2 }} defaultValue={t.name}
-            onBlur={(e) => e.target.value.trim() && e.target.value !== t.name && run(db().from("shift_templates").update({ name: e.target.value.trim() }).eq("id", t.id))}
-          />
-          <input className="input sm" style={{ flex: 1 }} type="time" defaultValue={hhmm(t.start_time)}
-            onBlur={(e) => e.target.value && e.target.value !== hhmm(t.start_time) && run(db().from("shift_templates").update({ start_time: e.target.value }).eq("id", t.id))} />
-          <input className="input sm" style={{ flex: 1 }} type="time" defaultValue={hhmm(t.end_time)}
-            onBlur={(e) => e.target.value && e.target.value !== hhmm(t.end_time) && run(db().from("shift_templates").update({ end_time: e.target.value }).eq("id", t.id))} />
-          <button className="icon-btn sm" aria-label={t.active ? "Isključi smjenu" : "Uključi smjenu"}
-            onClick={() => run(db().from("shift_templates").update({ active: !t.active }).eq("id", t.id))}>
-            {t.active ? <Trash2 size={15} /> : <Plus size={15} />}
-          </button>
+        <div key={t.id} className="card-inner stack tight" style={{ opacity: t.active ? 1 : 0.45 }}>
+          <div className="row" style={{ gap: 6 }}>
+            <input
+              className="input sm" style={{ flex: 1 }} defaultValue={t.name} aria-label="Naziv smjene"
+              onBlur={(e) => e.target.value.trim() && e.target.value !== t.name && run(db().from("shift_templates").update({ name: e.target.value.trim() }).eq("id", t.id))}
+            />
+            <button className="icon-btn sm" aria-label={t.active ? "Isključi smjenu" : "Uključi smjenu"}
+              onClick={() => run(db().from("shift_templates").update({ active: !t.active }).eq("id", t.id))}>
+              {t.active ? <Trash2 size={15} /> : <Plus size={15} />}
+            </button>
+          </div>
+          <div className="row" style={{ gap: 6 }}>
+            <input className="input sm" style={{ flex: 1 }} type="time" defaultValue={hhmm(t.start_time)} aria-label="Početak"
+              onBlur={(e) => e.target.value && e.target.value !== hhmm(t.start_time) && run(db().from("shift_templates").update({ start_time: e.target.value }).eq("id", t.id))} />
+            <span className="faint">–</span>
+            <input className="input sm" style={{ flex: 1 }} type="time" defaultValue={hhmm(t.end_time)} aria-label="Kraj"
+              onBlur={(e) => e.target.value && e.target.value !== hhmm(t.end_time) && run(db().from("shift_templates").update({ end_time: e.target.value }).eq("id", t.id))} />
+          </div>
         </div>
       ))}
       <button
