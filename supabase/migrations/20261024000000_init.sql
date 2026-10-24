@@ -474,7 +474,7 @@ begin
     ), '[]'::jsonb),
     'swaps', coalesce((
       select jsonb_agg(jsonb_build_object(
-        'id', s.id, 'date', s.date, 'status', s.status,
+        'id', s.id, 'date', s.date, 'status', s.status, 'shift_template_id', s.shift_template_id,
         'shift', t.name, 'location', l.name,
         'start', to_char(t.start_time, 'HH24:MI'), 'end', to_char(t.end_time, 'HH24:MI'),
         'from_name', f.name, 'to_name', te.name, 'accepted_name', ac.name,
